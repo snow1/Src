@@ -1,0 +1,142 @@
+option(LookLocalization)
+{
+	initial_state(look_left_stop_at_goal)
+	{
+		transition
+		{
+			if (state_time > 400 && !theHeadJointRequest.moving)
+				goto look_right_stop_at_goal;
+			else if (libCodeRelease.timeSinceBallWasSeen() == 0)
+				goto stop_left;
+			else if (state_time > 400)
+				goto stopl;
+		}
+			action
+		{
+			SetHeadPanTilt(1.0f, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = 85;//85
+		head.tilt = 20;//40,30,24;
+		head.speed = 100;*/
+		}
+	}
+
+	state(stopl)
+	{
+		transition
+		{
+			if (state_time> 400)
+			goto look_left_stop_at_goal;
+			
+		}
+			action
+		{
+			SetHeadPanTilt(1.0f, 0.0f, 0.0f);
+			Stand();
+		}
+	}
+	state(stopr)
+	{
+		transition
+		{
+			if (state_time>400)
+			goto look_right_stop_at_goal;
+
+		}
+			action
+		{
+			SetHeadPanTilt(1.0f, 0.0f, 0.0f);
+			Stand();
+		}
+	}
+
+	state(look_right_stop_at_goal)
+	{
+		transition
+		{
+			if (state_time > 400 && !theHeadJointRequest.moving)
+			goto look_left_stop_at_goal;
+			else if (libCodeRelease.timeSinceBallWasSeen() == 0)
+				goto stop_right;
+			else if(state_time > 400)
+				goto stopr;
+
+		}
+			action
+		{
+			SetHeadPanTilt(-1.0f, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = -120;
+		head.tilt = 20;
+		head.speed = 100;*/
+		}
+	}
+
+	state(stop_left)
+	{
+		transition
+		{
+			if (state_time > 400)
+			goto look_left;
+		}
+			action
+		{
+			SetHeadPanTilt(libCodeRelease.angleToGoal, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = goal.angle_to_last_seen;
+		head.tilt = 30;
+		head.speed = 100;*/
+		}
+	}
+
+	state(stop_right)
+	{
+		transition
+		{
+			if (state_time > 400)
+			goto look_right;
+		}
+			action
+		{
+			SetHeadPanTilt(libCodeRelease.angleToGoal, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = goal.angle_to_last_seen;
+		head.tilt = 30;
+		head.speed = 100;*/
+		}
+	}
+
+	state(look_left)
+	{
+		transition
+		{
+			if (state_time > 400 && !theHeadJointRequest.moving)
+			goto look_right_stop_at_goal;
+		}
+			action
+		{
+			SetHeadPanTilt(1.0f, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = 85;
+		head.tilt = 30;
+		head.speed = 100;*/
+		}
+	}
+
+	state(look_right)
+	{
+		transition
+		{
+			if (state_time > 400 && !theHeadJointRequest.moving)
+			goto look_left_stop_at_goal;
+		}
+			action
+		{
+			SetHeadPanTilt(-1.0f, 0.0f, 1.0f);
+		/*head.mode = pan_tilt;
+		head.pan = -85;
+		head.tilt = 30;
+		head.speed = 100;*/
+		}
+	}
+}

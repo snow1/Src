@@ -1,0 +1,80 @@
+/**
+ * @file TeammateData.h
+ *
+ * Representation of information received from my teammates
+ *
+ * @author <a href="mailto:tlaue@uni-bremen.de">Tim Laue</a>
+ */
+
+#pragma once
+
+#include <cstdint>
+#include "Representations/BehaviorControl/BehaviorStatus.h"
+#include "Representations/BehaviorControl/SPLStandardBehaviorStatus.h"
+#include "Representations/Modeling/BallModel.h"
+#include "Representations/Modeling/ObstacleModel.h"
+#include "Representations/Modeling/RobotPose.h"
+#include "Representations/Modeling/SideConfidence.h"
+#include "Representations/Modeling/Whistle.h"
+#include "Representations/Modeling/FieldCoverage.h"
+#include "Representations/BehaviorControl/Role.h"
+/**
+ * @struct Teammate
+ * Description of all information about/from a teammate
+ */
+STREAMABLE(Teammate,
+{
+  ENUM(Status,
+  {,
+    PENALIZED,                        /** OK   : I receive packets, but robot is penalized */
+    FALLEN,                           /** GOOD : Robot is playing but has fallen or currently no ground contact */
+    PLAYING,                          /** BEST : Teammate is standing/walking and has ground contact :-) */
+  }),
+
+  (int)(-1) number,                                   /**< The number of this player */
+  (int)(-1) rolenumber,
+  (bool)(false) isGoalkeeper,                         /**< The name says it all */
+  (bool)(true) isBHumanPlayer,                        /**< The name says it all */
+  (bool)(true) isPenalized,                           /**< The name says it all */
+  (bool)(true) isUpright,                             /**< The name says it all */
+  (unsigned)(0) timeWhenLastPacketReceived,           /**< The name says it all */
+  (unsigned)(0) timeOfLastGroundContact,              /**< The name says it all */
+  (bool)(true) hasGroundContact,                      /**< The name says it all */
+  (Status)(PENALIZED) status,                         /**< The name says it all */
+  (RobotPose) pose,                                   /**< The pose in global field coordinates场上的坐标点 */
+  (BallModel) ball,                                   /**< Model of the ball (in coordinates relative to my teammate's pose)球的信息 相对于队友 */
+  (ObstacleModelCompressed) obstacleModel,            /**< Model of obstacles (in coordinates relative to my teammate's pose) 障碍物的信息 相对于队友*/
+  (SideConfidence) sideConfidence,                    /**< The belief about playing in the right direction */
+  (BehaviorStatus) behaviorStatus,                    /**< Information about the behavior */
+  (SPLStandardBehaviorStatus) standardBehaviorStatus, /**< Behvaior information as specified by SPLStandardMessage */
+  (Whistle) whistle,                                  /**< Output of the WhistleRecognizer */
+  //(Role) role,
+  (TeammateRoles) teammateRoles,                      /**< The Roles the teammates should use */
+  (FieldCoverage::GridLine) fieldCoverageLine,        /**< The last Line of FieldCoverage this teammate sent */
+});
+//translation
+/**
+ * @struct TeammateData
+ * Collection of teammate information
+ */
+STREAMABLE(TeammateData,
+{
+  /** Drawing function for representation */
+  void draw() const,
+
+  (std::vector<Teammate>) teammates,        /**< An unordered(!) list of all teammates that are currently communicating with me */
+  (int)(0) numberOfActiveTeammates,         /**< The number of teammates (in the list) that are at not INACTIVE */
+  (bool)(false) sendThisFrame,              /**< The team communication will be sent in this frame. TODO: Find a better place!*/
+});
+
+/**
+ * @struct TeamDataSenderOutput
+ * An empty dummy representation for the TeamDataSender module
+ */
+STREAMABLE(TeamDataSenderOutput,
+{,
+});
+
+STREAMABLE_WITH_BASE(UnfilteredTeammateData, TeammateData,
+{,
+});
